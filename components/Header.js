@@ -8,11 +8,24 @@ import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
 
 // <-- import styles to be used
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from "../styles/Header.module.css";
 
 export default function Header() {
   const [modal, setModal] = useState(false);
+  const [dropdown, setDropdown] = useState(false);
+  const cartRef = useRef(null);
+  useEffect(() => {
+    const handler = (event) => {
+      if (!cartRef.current?.contains(event.target)) {
+        setDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
   return (
     <>
       <div className={style.header_container}>
@@ -29,9 +42,30 @@ export default function Header() {
             <FontAwesomeIcon onClick={() => setModal(!modal)} icon={faGlobe} />
           </div>
           <div>
-            <div className={style.userBox}>
-              <FontAwesomeIcon icon={faBars} />
-              <FontAwesomeIcon icon={faCircleUser} />
+            <div ref={cartRef} className={style.dorpdown_container}>
+              <div
+                className={style.userBox}
+                onClick={() => setDropdown(!dropdown)}
+              >
+                <FontAwesomeIcon icon={faBars} />
+                <FontAwesomeIcon
+                  style={{ marginRight: "0", fontSize: "25px" }}
+                  icon={faCircleUser}
+                />
+              </div>
+              <div
+                className={dropdown ? style.show_dropdown : style.dropdown_box}
+              >
+                <div className={style.content}>
+                  <h5>Sign up</h5>
+                  <p>Log in</p>
+                </div>
+                <hr />
+                <div className={style.content}>
+                  <p>Host your home</p>
+                  <p>Host an experience</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
